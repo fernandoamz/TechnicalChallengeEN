@@ -113,3 +113,12 @@ npm test
 ```
 
 The tests cover list filtering, the three Axios calls, the Zustand store, comment labels, and the search and Saved controls.
+
+## Next steps
+
+Unit tests check functions and one control in isolation. They do not launch the app or hit JSONPlaceholder.
+
+- **End-to-end tests.** Add Maestro flows that install the development build, open the list, search, save a post, filter to Saved, and open the detail screen to confirm the comments. Run those flows on an Android emulator in CI after the unit tests pass.
+- **CI.** Add a GitHub Actions workflow that runs `npm test` and `npx tsc --noEmit` on every pull request. A later job can call `eas build --platform android --profile preview`, which is already defined in `eas.json`, and publish the APK as a build artifact.
+- **Saved posts that survive a restart.** Move `favoriteIds` into persisted Zustand storage so a saved post is still there after the app is closed.
+- **Release path.** Use the preview APK for review, then a production EAS build when the app is ready to ship. The release profile in `eas.json` is the starting point.
