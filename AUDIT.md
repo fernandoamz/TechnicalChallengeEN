@@ -48,5 +48,6 @@ Checked against the Posts App brief. Update this file when a requirement changes
 These are documented as next steps, not as gaps in the brief:
 
 - End-to-end tests
-- CI
 - Favorites that survive a restart
+
+Android CI is in `.github/workflows/android-release.yml`. It still needs the `EXPO_TOKEN` repository secret before a build can finish.

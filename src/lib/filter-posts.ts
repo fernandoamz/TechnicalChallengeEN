@@ -16,6 +16,9 @@ export function filterPosts(
     if (!query) {
       return true;
     }
-    return post.title.toLowerCase().includes(query) || post.body.toLowerCase().includes(query);
+    return (
+      post.title.toLowerCase().includes(query) ||
+      post.body.toLowerCase().includes(query)
+    );
   });
 }

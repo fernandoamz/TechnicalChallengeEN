@@ -15,11 +15,18 @@ export function FeedControls() {
   const filter = useLibraryStore((state) => state.filter);
   const setSearch = useLibraryStore((state) => state.setSearch);
   const setFilter = useLibraryStore((state) => state.setFilter);
-  const savedCount = useLibraryStore((state) => Object.keys(state.favoriteIds).length);
+  const savedCount = useLibraryStore(
+    (state) => Object.keys(state.favoriteIds).length,
+  );
 
   return (
     <View style={styles.wrap}>
-      <View style={[styles.search, { backgroundColor: colors.surface, borderColor: colors.line }]}>
+      <View
+        style={[
+          styles.search,
+          { backgroundColor: colors.surface, borderColor: colors.line },
+        ]}
+      >
         <Text style={[styles.searchMark, { color: colors.inkMuted }]}>⌕</Text>
         <TextInput
           accessibilityLabel="Search posts"
@@ -29,7 +36,10 @@ export function FeedControls() {
           placeholder="Search titles and notes"
           placeholderTextColor={colors.inkMuted}
           returnKeyType="search"
-          style={[styles.input, { color: colors.ink, fontFamily: fontFamily.body }]}
+          style={[
+            styles.input,
+            { color: colors.ink, fontFamily: fontFamily.body },
+          ]}
           value={search}
         />
         {search.length > 0 ? (
@@ -37,8 +47,14 @@ export function FeedControls() {
             accessibilityRole="button"
             accessibilityLabel="Clear search"
             hitSlop={8}
-            onPress={() => setSearch('')}>
-            <Text style={[styles.clear, { color: colors.inkMuted, fontFamily: fontFamily.bodyMedium }]}>
+            onPress={() => setSearch('')}
+          >
+            <Text
+              style={[
+                styles.clear,
+                { color: colors.inkMuted, fontFamily: fontFamily.bodyMedium },
+              ]}
+            >
               Clear
             </Text>
           </Pressable>
@@ -47,7 +63,8 @@ export function FeedControls() {
       <View style={styles.filters}>
         {filters.map((item) => {
           const selected = filter === item.id;
-          const label = item.id === 'saved' ? `Saved ${savedCount}` : item.label;
+          const label =
+            item.id === 'saved' ? `Saved ${savedCount}` : item.label;
           return (
             <Pressable
               accessibilityRole="button"
@@ -60,7 +77,8 @@ export function FeedControls() {
                   backgroundColor: selected ? colors.ink : colors.surface,
                   borderColor: selected ? colors.ink : colors.line,
                 },
-              ]}>
+              ]}
+            >
               <Text
                 style={[
                   styles.chipLabel,
@@ -68,7 +86,8 @@ export function FeedControls() {
                     color: selected ? colors.canvas : colors.ink,
                     fontFamily: fontFamily.bodySemibold,
                   },
-                ]}>
+                ]}
+              >
                 {label}
               </Text>
             </Pressable>

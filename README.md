@@ -48,15 +48,15 @@ npm start
 
 ## Scripts
 
-| Command | What it does |
-|---|---|
-| `npm start` | Starts the dev server for the installed development build |
-| `npm run android` | Compiles and installs the debug app |
-| `npm run android:release` | Builds a release app with the bundle inside it |
-| `npm run ios` | Compiles and installs the iOS app (macOS) |
-| `npm run web` | Starts the web preview |
-| `npm test` | Runs the unit tests once |
-| `npm run lint` | Runs the Expo linter |
+| Command                   | What it does                                              |
+| ------------------------- | --------------------------------------------------------- |
+| `npm start`               | Starts the dev server for the installed development build |
+| `npm run android`         | Compiles and installs the debug app                       |
+| `npm run android:release` | Builds a release app with the bundle inside it            |
+| `npm run ios`             | Compiles and installs the iOS app (macOS)                 |
+| `npm run web`             | Starts the web preview                                    |
+| `npm test`                | Runs the unit tests once                                  |
+| `npm run lint`            | Runs the Expo linter                                      |
 
 ## Project structure
 
@@ -76,11 +76,11 @@ Screens do not call HTTP. A screen uses a query hook, the hook calls `src/api`, 
 
 Search, the All/Saved filter, and favorite ids live in Zustand. Changing them filters the cached posts and does not start a new request.
 
-| When | Request | Cache key |
-|---|---|---|
-| The list opens | `GET /posts` | `['posts']` |
-| The list opens | `GET /comments` | `['comments', 'counts']` |
-| A post opens | `GET /comments?postId={id}` | `['comments', postId]` |
+| When           | Request                     | Cache key                |
+| -------------- | --------------------------- | ------------------------ |
+| The list opens | `GET /posts`                | `['posts']`              |
+| The list opens | `GET /comments`             | `['comments', 'counts']` |
+| A post opens   | `GET /comments?postId={id}` | `['comments', postId]`   |
 
 The list counts comments from one `/comments` response. The detail screen does not fetch a single post. `usePost` selects it from the `['posts']` cache. Pull to refresh invalidates `['posts']` and `['comments']`.
 
@@ -118,8 +118,8 @@ npm test
 
 The tests cover list filtering, the three Axios calls, the Zustand store, comment labels, and the search and Saved controls.
 
-
 ## Live example (Android Simulator)
+
 https://github.com/user-attachments/assets/ecb18cb0-72b8-4d23-8acb-7b75318f3103
 
 ## Next steps
@@ -127,6 +127,6 @@ https://github.com/user-attachments/assets/ecb18cb0-72b8-4d23-8acb-7b75318f3103
 Unit tests check functions and one control in isolation. They do not launch the app or hit JSONPlaceholder.
 
 - **End-to-end tests.** Add Maestro flows that install the development build, open the list, search, save a post, filter to Saved, and open the detail screen to confirm the comments. Run those flows on an Android emulator in CI after the unit tests pass.
-- **CI.** Add a GitHub Actions workflow that runs `npm test` and `npx tsc --noEmit` on every pull request. A later job can call `eas build --platform android --profile preview`, which is already defined in `eas.json`, and publish the APK as a build artifact.
+- **CI.** `.github/workflows/android-release.yml` runs ESLint, TypeScript, and Prettier, then starts an EAS Android build. Pull requests and pushes to `main` use the `preview` profile. A manual run can choose `staging` (APK) or `production` (app bundle). The workflow needs a repository secret named `EXPO_TOKEN`.
 - **Saved posts that survive a restart.** Move `favoriteIds` into persisted Zustand storage so a saved post is still there after the app is closed.
 - **Release path.** Use the preview APK for review, then a production EAS build when the app is ready to ship. The release profile in `eas.json` is the starting point.

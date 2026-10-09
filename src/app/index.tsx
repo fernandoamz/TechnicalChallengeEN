@@ -48,7 +48,12 @@ export default function PostsScreen() {
   }
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.canvas, paddingTop: insets.top }]}>
+    <View
+      style={[
+        styles.screen,
+        { backgroundColor: colors.canvas, paddingTop: insets.top },
+      ]}
+    >
       <FlatList
         contentContainerStyle={[
           styles.content,
@@ -60,13 +65,27 @@ export default function PostsScreen() {
         keyExtractor={(item) => String(item.id)}
         ListEmptyComponent={
           isLoading ? (
-            <ActivityIndicator color={colors.accent} size="large" style={styles.loader} />
+            <ActivityIndicator
+              color={colors.accent}
+              size="large"
+              style={styles.loader}
+            />
           ) : error ? (
             <View style={styles.message}>
-              <Text style={[styles.messageTitle, { color: colors.ink, fontFamily: fontFamily.display }]}>
+              <Text
+                style={[
+                  styles.messageTitle,
+                  { color: colors.ink, fontFamily: fontFamily.display },
+                ]}
+              >
                 Couldn’t load posts
               </Text>
-              <Text style={[styles.messageBody, { color: colors.inkMuted, fontFamily: fontFamily.body }]}>
+              <Text
+                style={[
+                  styles.messageBody,
+                  { color: colors.inkMuted, fontFamily: fontFamily.body },
+                ]}
+              >
                 {errorMessage(error)}
               </Text>
               <Pressable
@@ -75,18 +94,37 @@ export default function PostsScreen() {
                   postsQuery.refetch();
                   countsQuery.refetch();
                 }}
-                style={[styles.retry, { backgroundColor: colors.accent }]}>
-                <Text style={[styles.retryLabel, { color: colors.onAccent, fontFamily: fontFamily.bodySemibold }]}>
+                style={[styles.retry, { backgroundColor: colors.accent }]}
+              >
+                <Text
+                  style={[
+                    styles.retryLabel,
+                    {
+                      color: colors.onAccent,
+                      fontFamily: fontFamily.bodySemibold,
+                    },
+                  ]}
+                >
                   Try again
                 </Text>
               </Pressable>
             </View>
           ) : (
             <View style={styles.message}>
-              <Text style={[styles.messageTitle, { color: colors.ink, fontFamily: fontFamily.display }]}>
+              <Text
+                style={[
+                  styles.messageTitle,
+                  { color: colors.ink, fontFamily: fontFamily.display },
+                ]}
+              >
                 {filter === 'saved' ? 'Nothing saved yet' : 'No matching posts'}
               </Text>
-              <Text style={[styles.messageBody, { color: colors.inkMuted, fontFamily: fontFamily.body }]}>
+              <Text
+                style={[
+                  styles.messageBody,
+                  { color: colors.inkMuted, fontFamily: fontFamily.body },
+                ]}
+              >
                 {filter === 'saved'
                   ? 'Tap the heart on a post to keep it in this list.'
                   : 'Try a different word from a title or note.'}
@@ -96,10 +134,20 @@ export default function PostsScreen() {
         }
         ListHeaderComponent={
           <View>
-            <Text style={[styles.kicker, { color: colors.olive, fontFamily: fontFamily.bodySemibold }]}>
+            <Text
+              style={[
+                styles.kicker,
+                { color: colors.olive, fontFamily: fontFamily.bodySemibold },
+              ]}
+            >
               READING ROOM
             </Text>
-            <Text style={[styles.title, { color: colors.ink, fontFamily: fontFamily.displayBold }]}>
+            <Text
+              style={[
+                styles.title,
+                { color: colors.ink, fontFamily: fontFamily.displayBold },
+              ]}
+            >
               Field Notes
             </Text>
             <View style={[styles.rule, { backgroundColor: colors.accent }]} />
@@ -115,7 +163,10 @@ export default function PostsScreen() {
           />
         }
         renderItem={({ item }) => (
-          <PostCard commentCount={countsQuery.data?.[item.id] ?? 0} post={item} />
+          <PostCard
+            commentCount={countsQuery.data?.[item.id] ?? 0}
+            post={item}
+          />
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />

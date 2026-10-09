@@ -14,7 +14,9 @@ type PostCardProps = {
 
 export function PostCard({ post, commentCount }: PostCardProps) {
   const colors = usePalette();
-  const isFavorite = useLibraryStore((state) => Boolean(state.favoriteIds[post.id]));
+  const isFavorite = useLibraryStore((state) =>
+    Boolean(state.favoriteIds[post.id]),
+  );
   const toggleFavorite = useLibraryStore((state) => state.toggleFavorite);
 
   return (
@@ -25,8 +27,11 @@ export function PostCard({ post, commentCount }: PostCardProps) {
           backgroundColor: colors.surface,
           borderColor: colors.line,
         },
-      ]}>
-      {isFavorite ? <View style={[styles.mark, { backgroundColor: colors.accent }]} /> : null}
+      ]}
+    >
+      {isFavorite ? (
+        <View style={[styles.mark, { backgroundColor: colors.accent }]} />
+      ) : null}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`${post.title}. ${commentLabel(commentCount)}. ${isFavorite ? 'Saved' : 'Not saved'}`}
@@ -37,21 +42,40 @@ export function PostCard({ post, commentCount }: PostCardProps) {
             params: { id: String(post.id) },
           })
         }
-        style={styles.copy}>
-        <Text style={[styles.index, { color: colors.olive, fontFamily: fontFamily.bodySemibold }]}>
+        style={styles.copy}
+      >
+        <Text
+          style={[
+            styles.index,
+            { color: colors.olive, fontFamily: fontFamily.bodySemibold },
+          ]}
+        >
           {String(post.id).padStart(2, '0')}
         </Text>
         <Text
           numberOfLines={2}
-          style={[styles.title, { color: colors.ink, fontFamily: fontFamily.display }]}>
+          style={[
+            styles.title,
+            { color: colors.ink, fontFamily: fontFamily.display },
+          ]}
+        >
           {post.title}
         </Text>
         <Text
           numberOfLines={2}
-          style={[styles.body, { color: colors.inkMuted, fontFamily: fontFamily.body }]}>
+          style={[
+            styles.body,
+            { color: colors.inkMuted, fontFamily: fontFamily.body },
+          ]}
+        >
           {post.body}
         </Text>
-        <Text style={[styles.meta, { color: colors.accent, fontFamily: fontFamily.bodyMedium }]}>
+        <Text
+          style={[
+            styles.meta,
+            { color: colors.accent, fontFamily: fontFamily.bodyMedium },
+          ]}
+        >
           {commentLabel(commentCount)}
         </Text>
       </Pressable>
@@ -60,8 +84,14 @@ export function PostCard({ post, commentCount }: PostCardProps) {
         accessibilityLabel={isFavorite ? 'Remove from saved' : 'Save post'}
         hitSlop={8}
         onPress={() => toggleFavorite(post.id)}
-        style={styles.heartButton}>
-        <Text style={[styles.heart, { color: isFavorite ? colors.accent : colors.inkMuted }]}>
+        style={styles.heartButton}
+      >
+        <Text
+          style={[
+            styles.heart,
+            { color: isFavorite ? colors.accent : colors.inkMuted },
+          ]}
+        >
           {isFavorite ? '♥' : '♡'}
         </Text>
       </Pressable>

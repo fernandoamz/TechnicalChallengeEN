@@ -24,7 +24,13 @@ describe('post requests', () => {
     get.mockResolvedValue({
       data: [
         { postId: 1, id: 10, name: 'A', email: 'a@example.com', body: 'First' },
-        { postId: 1, id: 11, name: 'B', email: 'b@example.com', body: 'Second' },
+        {
+          postId: 1,
+          id: 11,
+          name: 'B',
+          email: 'b@example.com',
+          body: 'Second',
+        },
         { postId: 2, id: 12, name: 'C', email: 'c@example.com', body: 'Only' },
       ],
     });
@@ -34,7 +40,9 @@ describe('post requests', () => {
   });
 
   test('loads comments for a single post', async () => {
-    const comments = [{ postId: 4, id: 20, name: 'D', email: 'd@example.com', body: 'Hi' }];
+    const comments = [
+      { postId: 4, id: 20, name: 'D', email: 'd@example.com', body: 'Hi' },
+    ];
     get.mockResolvedValue({ data: comments });
 
     await expect(fetchComments(4)).resolves.toEqual(comments);

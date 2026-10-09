@@ -1,0 +1,108 @@
+name: Android Release
+run-name: "Android Release #${{ github.run_number }} — ${{ github.event_name == 'workflow_dispatch' && (inputs.profile == 'production' && 'Production app bundle' || 'Staging APK') || github.event_name == 'pull_request' && 'Pull request preview' || 'Main branch preview' }}"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Build to create
+        type: choice
+        default: staging
+        options:
+          - staging
+          - production
+
+jobs:
+  quality:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linter
+            command: npx eslint . --quiet
+          - name: ts checks
+            command: npx tsc --noEmit
+          - name: prettier
+            command: npx prettier --check .
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check
+        run: ${{ matrix.command }}
+
+  build-apk:
+    name: build apk
+    needs: quality
+    runs-on: ubuntu-latest
+    outputs:
+      apk_url: ${{ steps.apk.outputs.apk_url }}
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      BUILD_PROFILE: ${{ github.event_name == 'workflow_dispatch' && inputs.profile || 'preview' }}
+      RELEASE_NAME: "Android Release #${{ github.run_number }} — ${{ github.event_name == 'workflow_dispatch' && (inputs.profile == 'production' && 'Production app bundle' || 'Staging APK') || github.event_name == 'pull_request' && 'Pull request preview' || 'Main branch preview' }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Require Expo token
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::Repository secret EXPO_TOKEN is not visible to this workflow."
+            echo "Add it under Settings → Secrets and variables → Actions → Secrets."
+            echo "The name must be exactly EXPO_TOKEN. A Variable, or a secret stored only on an Environment, is not read here."
+            exit 1
+          fi
+
+      - name: Set up EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android
+        run: eas build --profile "$BUILD_PROFILE" --platform android --non-interactive --json --wait --message "$RELEASE_NAME" > build.json
+
+      - name: Read download URL
+        id: apk
+        run: |
+          URL=$(jq -r 'if type == "array" then .[0] else . end | .artifacts.buildUrl' build.json)
+          if [ -z "$URL" ] || [ "$URL" = "null" ]; then
+            echo "artifacts.buildUrl missing from EAS build output"
+            cat build.json
+            exit 1
+          fi
+          echo "apk_url=$URL" >> "$GITHUB_OUTPUT"
+
+  complete:
+    name: complete
+    needs: build-apk
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish download link
+        run: |
+          echo "Android Release #${{ github.run_number }} · [Download](${{ needs.build-apk.outputs.apk_url }})" >> "$GITHUB_STEP_SUMMARY"
