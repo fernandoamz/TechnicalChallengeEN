@@ -114,6 +114,10 @@ npm test
 
 The tests cover list filtering, the three Axios calls, the Zustand store, comment labels, and the search and Saved controls.
 
+
+## Live example
+https://github.com/user-attachments/assets/ecb18cb0-72b8-4d23-8acb-7b75318f3103
+
 ## Next steps
 
 Unit tests check functions and one control in isolation. They do not launch the app or hit JSONPlaceholder.
