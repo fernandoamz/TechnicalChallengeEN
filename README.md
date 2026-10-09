@@ -1,56 +1,115 @@
-# Welcome to your Expo app 👋
+# Field Notes
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An Expo app that lists posts from [JSONPlaceholder](https://jsonplaceholder.typicode.com). It installs as its own app and does not run inside Expo Go.
 
-## Get started
+## Features
 
-1. Install dependencies
+- List every post with its title, body, and comment count.
+- Open a post and read its comments.
+- Search titles and bodies.
+- Save a post and show only saved posts.
+- Pull to refresh the list.
 
-   ```bash
-   npm install
-   ```
+Saved posts last until the app process ends. They are not stored on disk and they are not sent to the API.
 
-2. Start the app
+## Stack
 
-   ```bash
-   npx expo start
-   ```
+- Expo SDK 57 and Expo Router
+- Axios for REST
+- TanStack Query for server state
+- Zustand for search, the Saved filter, and favorite ids
+- Jest and React Native Testing Library
 
-In the output, you'll find options to open the app in a
+## Requirements
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js 22 or newer
+- npm
+- Android Studio with an emulator or a USB device, for an Android build
+- JDK 17. Android Studio’s bundled JDK 25 fails the native CMake step. Set Android Studio’s Gradle JDK to JDK 17, or set `org.gradle.java.home` in `android/gradle.properties`. The `android/` folder is generated and is not committed.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Getting started
 
 ```bash
-npm run reset-project
+npm install
+npm run android
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The first Android command compiles the app and installs **TechChallengeEN**. After that, start the dev server and open that icon:
 
-### Other setup steps
+```bash
+npm start
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+`npm run android:release` builds a binary that includes the JavaScript, so it opens with the dev server stopped.
 
-## Learn more
+## Scripts
 
-To learn more about developing your project with Expo, look at the following resources:
+| Command | What it does |
+|---|---|
+| `npm start` | Starts the dev server for the installed development build |
+| `npm run android` | Compiles and installs the debug app |
+| `npm run android:release` | Builds a release app with the bundle inside it |
+| `npm run ios` | Compiles and installs the iOS app (macOS) |
+| `npm run web` | Starts the web preview |
+| `npm test` | Runs the unit tests once |
+| `npm run lint` | Runs the Expo linter |
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Project structure
 
-## Join the community
+```
+src/app            screens and navigation
+src/components     post cards and the search bar
+src/queries        TanStack Query hooks and cache keys
+src/api            Axios client, requests, and response types
+src/store          Zustand store
+src/design         color, font, spacing, and radius tokens
+src/lib            list filtering and display helpers
+```
 
-Join our community of developers creating universal apps.
+## Architecture
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Screens do not call HTTP. A screen uses a query hook, the hook calls `src/api`, and Axios talks to the server. `QueryClientProvider` in `src/app/_layout.tsx` wraps the stack, so the list and the detail screen share one cache.
+
+Search, the All/Saved filter, and favorite ids live in Zustand. Changing them filters the cached posts and does not start a new request.
+
+| When | Request | Cache key |
+|---|---|---|
+| The list opens | `GET /posts` | `['posts']` |
+| The list opens | `GET /comments` | `['comments', 'counts']` |
+| A post opens | `GET /comments?postId={id}` | `['comments', postId]` |
+
+The list counts comments from one `/comments` response. The detail screen does not fetch a single post. `usePost` selects it from the `['posts']` cache. Pull to refresh invalidates `['posts']` and `['comments']`.
+
+## Data structures
+
+```ts
+type Post = { userId: number; id: number; title: string; body: string };
+
+type Comment = {
+  postId: number;
+  id: number;
+  name: string;
+  email: string;
+  body: string;
+};
+```
+
+The feed stores counts, not the comment bodies: `Record<postId, number>`.
+
+```ts
+type LibraryState = {
+  search: string;
+  filter: 'all' | 'saved';
+  favoriteIds: Record<number, true>;
+};
+```
+
+Search matches `title` and `body`. Saved keeps only ids present in `favoriteIds`.
+
+## Tests
+
+```bash
+npm test
+```
+
+The tests cover list filtering, the three Axios calls, the Zustand store, comment labels, and the search and Saved controls.

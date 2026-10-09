@@ -8,9 +8,11 @@
     "scheme": "techchallengeen",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.techchallengeen.app"
     },
     "android": {
+      "package": "com.techchallengeen.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

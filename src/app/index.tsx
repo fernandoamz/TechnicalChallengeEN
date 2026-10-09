@@ -1,98 +1,181 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useQueryClient } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { FeedControls } from '@/components/posts/feed-controls';
+import { PostCard } from '@/components/posts/post-card';
+import { usePalette } from '@/design/use-palette';
+import { fontFamily, space } from '@/design/tokens';
+import { filterPosts } from '@/lib/filter-posts';
+import { errorMessage } from '@/lib/format';
+import { useCommentCounts, usePosts } from '@/queries/posts';
+import { useLibraryStore } from '@/store/library-store';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+export default function PostsScreen() {
+  const colors = usePalette();
+  const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
+  const postsQuery = usePosts();
+  const countsQuery = useCommentCounts();
+  const search = useLibraryStore((state) => state.search);
+  const filter = useLibraryStore((state) => state.filter);
+  const favoriteIds = useLibraryStore((state) => state.favoriteIds);
+
+  const posts = useMemo(
+    () => filterPosts(postsQuery.data ?? [], search, filter, favoriteIds),
+    [postsQuery.data, search, filter, favoriteIds],
   );
-}
 
-export default function HomeScreen() {
+  const isLoading = postsQuery.isPending || countsQuery.isPending;
+  const error = postsQuery.error ?? countsQuery.error;
+  const isRefreshing =
+    (postsQuery.isRefetching || countsQuery.isRefetching) && !isLoading;
+
+  async function refresh() {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['posts'] }),
+      queryClient.invalidateQueries({ queryKey: ['comments'] }),
+    ]);
+  }
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+    <View style={[styles.screen, { backgroundColor: colors.canvas, paddingTop: insets.top }]}>
+      <FlatList
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: insets.bottom + space.xxl },
+          posts.length === 0 && styles.emptyContent,
+        ]}
+        data={isLoading || error ? [] : posts}
+        keyboardShouldPersistTaps="handled"
+        keyExtractor={(item) => String(item.id)}
+        ListEmptyComponent={
+          isLoading ? (
+            <ActivityIndicator color={colors.accent} size="large" style={styles.loader} />
+          ) : error ? (
+            <View style={styles.message}>
+              <Text style={[styles.messageTitle, { color: colors.ink, fontFamily: fontFamily.display }]}>
+                Couldn’t load posts
+              </Text>
+              <Text style={[styles.messageBody, { color: colors.inkMuted, fontFamily: fontFamily.body }]}>
+                {errorMessage(error)}
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  postsQuery.refetch();
+                  countsQuery.refetch();
+                }}
+                style={[styles.retry, { backgroundColor: colors.accent }]}>
+                <Text style={[styles.retryLabel, { color: colors.onAccent, fontFamily: fontFamily.bodySemibold }]}>
+                  Try again
+                </Text>
+              </Pressable>
+            </View>
+          ) : (
+            <View style={styles.message}>
+              <Text style={[styles.messageTitle, { color: colors.ink, fontFamily: fontFamily.display }]}>
+                {filter === 'saved' ? 'Nothing saved yet' : 'No matching posts'}
+              </Text>
+              <Text style={[styles.messageBody, { color: colors.inkMuted, fontFamily: fontFamily.body }]}>
+                {filter === 'saved'
+                  ? 'Tap the heart on a post to keep it in this list.'
+                  : 'Try a different word from a title or note.'}
+              </Text>
+            </View>
+          )
+        }
+        ListHeaderComponent={
+          <View>
+            <Text style={[styles.kicker, { color: colors.olive, fontFamily: fontFamily.bodySemibold }]}>
+              READING ROOM
+            </Text>
+            <Text style={[styles.title, { color: colors.ink, fontFamily: fontFamily.displayBold }]}>
+              Field Notes
+            </Text>
+            <View style={[styles.rule, { backgroundColor: colors.accent }]} />
+            <FeedControls />
+          </View>
+        }
+        refreshControl={
+          <RefreshControl
+            colors={[colors.accent]}
+            onRefresh={refresh}
+            refreshing={isRefreshing}
+            tintColor={colors.accent}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        }
+        renderItem={({ item }) => (
+          <PostCard commentCount={countsQuery.data?.[item.id] ?? 0} post={item} />
+        )}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+  content: {
+    paddingHorizontal: space.xl,
+    paddingTop: space.lg,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  emptyContent: {
+    flexGrow: 1,
+  },
+  kicker: {
+    fontSize: 12,
+    letterSpacing: 1.6,
   },
   title: {
-    textAlign: 'center',
+    fontSize: 40,
+    lineHeight: 46,
+    marginTop: space.xs,
   },
-  code: {
-    textTransform: 'uppercase',
+  rule: {
+    width: 48,
+    height: 3,
+    borderRadius: 2,
+    marginTop: space.md,
+    marginBottom: space.xl,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  separator: {
+    height: space.md,
+  },
+  loader: {
+    marginTop: space.xxxl,
+  },
+  message: {
+    paddingTop: space.xxl,
+    gap: space.sm,
+    alignItems: 'flex-start',
+  },
+  messageTitle: {
+    fontSize: 28,
+    lineHeight: 34,
+  },
+  messageBody: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  retry: {
+    marginTop: space.sm,
+    borderRadius: 999,
+    paddingHorizontal: space.lg,
+    paddingVertical: space.md,
+  },
+  retryLabel: {
+    fontSize: 15,
   },
 });
