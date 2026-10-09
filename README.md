@@ -12,6 +12,10 @@ An Expo app that lists posts from [JSONPlaceholder](https://jsonplaceholder.typi
 
 Saved posts last until the app process ends. They are not stored on disk and they are not sent to the API.
 
+## Design
+
+The screens were designed in Figma from a written prompt, then built in the app. Color, type, spacing, and corner radius are defined in `src/design/tokens.ts`.
+
 ## Stack
 
 - Expo SDK 57 and Expo Router
