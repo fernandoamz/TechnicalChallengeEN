@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">Welcome to Field Notes</title>
+  <desc id="desc">A posts reader for titles, comments, and saved notes.</desc>
+  <rect width="1200" height="320" fill="#F3EDE4"/>
+  <rect width="8" height="320" fill="#B8502A"/>
+  <text x="72" y="96" fill="#2F4A3C" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="2.8">WELCOME</text>
+  <text x="72" y="168" fill="#1E1A16" font-family="Georgia, Palatino, 'Times New Roman', serif" font-size="64">Field Notes</text>
+  <text x="72" y="214" fill="#6F675E" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20">Posts, comments, and the ones you save.</text>
+  <rect x="748" y="52" width="380" height="216" rx="16" fill="#FFF9F2" stroke="#E4D9CC"/>
+  <rect x="748" y="68" width="4" height="184" fill="#B8502A"/>
+  <text x="780" y="100" fill="#2F4A3C" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="600">01</text>
+  <text x="780" y="146" fill="#1E1A16" font-family="Georgia, Palatino, 'Times New Roman', serif" font-size="26">Notes from the field</text>
+  <text x="780" y="184" fill="#6F675E" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16">Title, body, and how many</text>
+  <text x="780" y="208" fill="#6F675E" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16">comments are waiting.</text>
+</svg>
