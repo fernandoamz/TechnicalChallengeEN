@@ -46,6 +46,10 @@ npm start
 
 `npm run android:release` builds a binary that includes the JavaScript, so it opens with the dev server stopped.
 
+## Download an APK
+
+You can install a built APK without compiling the app locally. Open [Actions](https://github.com/fernandoamz/TechnicalChallengeEN/actions), choose a finished Android Release run, and use the download link in the run summary.
+
 ## Scripts
 
 | Command                   | What it does                                              |
@@ -127,6 +131,6 @@ https://github.com/user-attachments/assets/ecb18cb0-72b8-4d23-8acb-7b75318f3103
 Unit tests check functions and one control in isolation. They do not launch the app or hit JSONPlaceholder.
 
 - **End-to-end tests.** Add Maestro flows that install the development build, open the list, search, save a post, filter to Saved, and open the detail screen to confirm the comments. Run those flows on an Android emulator in CI after the unit tests pass.
-- **CI.** `.github/workflows/android-release.yml` runs ESLint, TypeScript, and Prettier, then starts an EAS Android build. Pull requests and pushes to `main` use the `preview` profile. A manual run can choose `staging` (APK) or `production` (app bundle). The workflow needs a repository secret named `EXPO_TOKEN`.
+- **CI.** `.github/workflows/android-release.yml` runs ESLint, TypeScript, and Prettier, then starts an EAS Android build. The APK for a finished run is linked from [Actions](https://github.com/fernandoamz/TechnicalChallengeEN/actions). Pull requests and pushes to `main` use the `preview` profile. A manual run can choose `staging` (APK) or `production` (app bundle). The workflow needs a repository secret named `EXPO_TOKEN`.
 - **Saved posts that survive a restart.** Move `favoriteIds` into persisted Zustand storage so a saved post is still there after the app is closed.
 - **Release path.** Use the preview APK for review, then a production EAS build when the app is ready to ship. The release profile in `eas.json` is the starting point.
