@@ -86,11 +86,12 @@ The list counts comments from one `/comments` response. The detail screen does n
 
 ## How this was built
 
-I set up Zustand, the Axios connection, and the data pipes between them.
+I set up Zustand, the Axios connection, the data pipes between them, and Expo EAS for continuous delivery.
 
 - Zustand holds search, the Saved filter, and favorite ids in `src/store/library-store.ts`.
 - Axios is the HTTP client in `src/api/client.ts`. The post and comment requests are in `src/api/posts.ts`.
 - The pipes are the hooks in `src/queries/posts.ts`. They call those Axios functions and hand the cached posts, comment counts, and comments to the screens.
+- EAS builds the Android app from GitHub Actions. Profiles live in `eas.json`. The workflow is `.github/workflows/android-release.yml`: pull requests and pushes to `main` build a preview APK, and a manual run can choose staging or production.
 
 Figma AI made the screen designs from the requirement analysis. The Cursor agent built those screens and connected them to the pipes above.
 
