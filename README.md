@@ -46,10 +46,6 @@ npm start
 
 `npm run android:release` builds a binary that includes the JavaScript, so it opens with the dev server stopped.
 
-## Download an APK
-
-You can install a built APK without compiling the app locally. Open [Actions](https://github.com/fernandoamz/TechnicalChallengeEN/actions), choose a finished Android Release run, and use the download link in the run summary.
-
 ## Scripts
 
 | Command                   | What it does                                              |
@@ -125,6 +121,10 @@ The tests cover list filtering, the three Axios calls, the Zustand store, commen
 ## Live example (Android Simulator)
 
 https://github.com/user-attachments/assets/ecb18cb0-72b8-4d23-8acb-7b75318f3103
+
+## APK
+
+> **APKs are in GitHub Actions.** Open a finished [Android Release](https://github.com/fernandoamz/TechnicalChallengeEN/actions) run and use the download link in the summary.
 
 ## Next steps
 
