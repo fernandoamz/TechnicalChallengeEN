@@ -2,8 +2,6 @@
   <img src="./assets/readme-banner.svg" alt="Welcome to Field Notes. Posts, comments, and the ones you save." width="100%" />
 </p>
 
-# Field Notes
-
 An Expo app that lists posts from [JSONPlaceholder](https://jsonplaceholder.typicode.com). It installs as its own app and does not run inside Expo Go.
 
 <p align="center">
