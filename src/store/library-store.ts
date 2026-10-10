@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 
-// Search, the Saved filter, and favorite ids stay on the device.
-// They are not sent to the API and they reset when the process ends.
+// Search is used to filter the feed.
+// The Saved filter is used to filter the feed to only show saved posts.
+// Favorite ids are used to store the ids of the posts that are favorited.
 
 export type FeedFilter = 'all' | 'saved';
 

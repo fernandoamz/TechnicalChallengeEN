@@ -26,7 +26,9 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const scheme = useColorScheme();
-  const colors = scheme === 'dark' ? palette.dark : palette.light;
+  const isDarkMode = scheme === 'dark';
+  const colors = isDarkMode ? palette.dark : palette.light;
+
   const [fontsLoaded, fontError] = useFonts({
     Fraunces_600SemiBold,
     Fraunces_700Bold,
@@ -45,14 +47,16 @@ export default function RootLayout() {
     return null;
   }
 
-  // Both screens read and write the same TanStack Query cache.
   return (
     <QueryClientProvider client={queryClient}>
-      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style={isDarkMode ? 'light' : 'dark'} />
+
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: colors.canvas },
+          contentStyle: {
+            backgroundColor: colors.canvas,
+          },
         }}
       />
     </QueryClientProvider>

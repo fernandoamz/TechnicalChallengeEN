@@ -9,7 +9,7 @@ export function usePosts() {
   });
 }
 
-// Same cache key as usePosts, so opening a post does not send a second GET /posts.
+// Fetch the post by ID.
 export function usePost(postId: number) {
   return useQuery({
     queryKey: ['posts'],
@@ -26,7 +26,7 @@ export function useCommentCounts() {
   });
 }
 
-// Separate from the feed's count query so this screen can load and retry on its own.
+// Fetch the comments for a post.
 export function usePostComments(postId: number) {
   return useQuery({
     queryKey: ['comments', postId],

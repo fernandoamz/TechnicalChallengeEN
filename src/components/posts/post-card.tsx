@@ -2,8 +2,8 @@ import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Post } from '@/api/types';
-import { usePalette } from '@/design/use-palette';
 import { fontFamily, radius, space } from '@/design/tokens';
+import { usePalette } from '@/design/use-palette';
 import { commentLabel } from '@/lib/format';
 import { useLibraryStore } from '@/store/library-store';
 
@@ -81,7 +81,7 @@ export function PostCard({ post, commentCount }: PostCardProps) {
       </Pressable>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={isFavorite ? 'Remove from saved' : 'Save post'}
+        accessibilityLabel={isFavorite ? 'Remove saved' : 'Save post'}
         hitSlop={8}
         onPress={() => toggleFavorite(post.id)}
         style={styles.heartButton}

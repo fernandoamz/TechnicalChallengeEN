@@ -14,7 +14,7 @@ Saved posts last until the app process ends. They are not stored on disk and the
 
 ## Design
 
-The screens were designed in Figma from a written prompt, then built in the app. Color, type, spacing, and corner radius are defined in `src/design/tokens.ts`.
+Figma AI produced the screens from the requirement analysis. Color, type, spacing, and corner radius from that work are defined in `src/design/tokens.ts`.
 
 ## Stack
 
@@ -83,6 +83,16 @@ Search, the All/Saved filter, and favorite ids live in Zustand. Changing them fi
 | A post opens   | `GET /comments?postId={id}` | `['comments', postId]`   |
 
 The list counts comments from one `/comments` response. The detail screen does not fetch a single post. `usePost` selects it from the `['posts']` cache. Pull to refresh invalidates `['posts']` and `['comments']`.
+
+## How this was built
+
+I set up Zustand, the Axios connection, and the data pipes between them.
+
+- Zustand holds search, the Saved filter, and favorite ids in `src/store/library-store.ts`.
+- Axios is the HTTP client in `src/api/client.ts`. The post and comment requests are in `src/api/posts.ts`.
+- The pipes are the hooks in `src/queries/posts.ts`. They call those Axios functions and hand the cached posts, comment counts, and comments to the screens.
+
+Figma AI made the screen designs from the requirement analysis. The Cursor agent built those screens and connected them to the pipes above.
 
 ## Data structures
 
