@@ -147,6 +147,10 @@ The tests cover list filtering, the three Axios calls, the Zustand store, commen
 
 https://github.com/user-attachments/assets/ecb18cb0-72b8-4d23-8acb-7b75318f3103
 
+## Kotlin Version
+
+https://github.com/fernandoamz/JSONPlaceholderKotlin
+
 ## APK
 
 > **APKs are in GitHub Actions.** Open a finished [Android Release](https://github.com/fernandoamz/TechnicalChallengeEN/actions) run and use the download link in the summary.
